@@ -38,7 +38,6 @@ async function run() {
     // user api
     app.post('/user', async (req, res) => {
       const query = req.body;
-      console.log(query);
       const result = await userCollection.insertOne(query);
       res.send(result)
     })
@@ -71,7 +70,6 @@ async function run() {
     // review task from employee to boss
     app.post('/review-task', async (req, res) => {
       const query = req.body;
-      console.log(query);
       const result = await reviewCollection.insertOne(query);
       res.send(result)
     })
@@ -79,17 +77,17 @@ async function run() {
 
     // extend day from employee to distributor patch
     app.patch('/extend-day-task/:id', async (req, res) => {
-      const { extendDay } = req.body;
+      const { extendDay, extededByDistributor, newRemainingDays } = req.body;
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) }
-      console.log('extendDay', extendDay);
 
       const updateDoc = {
         $set: {
-          extendDay: extendDay
+          extendDay: extendDay,
+          extededByDistributor: extededByDistributor,
+          newRemainingDays: newRemainingDays
         }
       }
-      console.log(updateDoc);
 
       const result = await productCollection.updateOne(filter, updateDoc)
       res.send(result)
@@ -98,7 +96,7 @@ async function run() {
 
     // revision added using from boss dashboard patch
     app.patch('/review-task/:id', async (req, res) => {
-      const { reviewToBoss, revisionNoteFromBoss, acceptByBoss, sendToMockupFromBoss, acceptByBossMockUpTask, sendToBossFromSEO } = req.body;
+      const { reviewToBoss, revisionNoteFromBoss, acceptByBoss, sendToMockupFromBoss, acceptByBossMockUpTask, sendToBossFromSEO, sendToSEOFromBoss, readyToUpload } = req.body;
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) }
 
@@ -109,7 +107,9 @@ async function run() {
           acceptByBoss: acceptByBoss,
           sendToMockupFromBoss: sendToMockupFromBoss,
           acceptByBossMockUpTask: acceptByBossMockUpTask,
-          sendToBossFromSEO: sendToBossFromSEO
+          sendToBossFromSEO: sendToBossFromSEO,
+          sendToSEOFromBoss: sendToSEOFromBoss,
+          readyToUpload: readyToUpload
         }
       }
 
@@ -140,8 +140,8 @@ async function run() {
 
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    // await client.db("admin").command({ ping: 1 });
+    // console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
