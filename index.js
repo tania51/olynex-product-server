@@ -76,21 +76,49 @@ async function run() {
       res.send(result)
     })
 
+
+    // extend day from employee to distributor patch
+    app.patch('/extend-day-task/:id', async (req, res) => {
+      const { extendDay } = req.body;
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      console.log('extendDay', extendDay);
+
+      const updateDoc = {
+        $set: {
+          extendDay: extendDay
+        }
+      }
+      console.log(updateDoc);
+
+      const result = await productCollection.updateOne(filter, updateDoc)
+      res.send(result)
+    })
+
+
     // revision added using from boss dashboard patch
     app.patch('/review-task/:id', async (req, res) => {
-      const { reviewToBoss } = req.body;
+      const { reviewToBoss, revisionNoteFromBoss, acceptByBoss, sendToMockupFromBoss, acceptByBossMockUpTask, sendToBossFromSEO } = req.body;
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) }
 
       const updateDoc = {
         $set: {
-          reviewToBoss: reviewToBoss
+          reviewToBoss: reviewToBoss,
+          revisionNoteFromBoss: revisionNoteFromBoss,
+          acceptByBoss: acceptByBoss,
+          sendToMockupFromBoss: sendToMockupFromBoss,
+          acceptByBossMockUpTask: acceptByBossMockUpTask,
+          sendToBossFromSEO: sendToBossFromSEO
         }
       }
 
       const result = await reviewCollection.updateOne(filter, updateDoc)
       res.send(result)
     })
+
+
+
 
     // revision added using patch
     app.patch('/review-task-from-distributor/:id', async (req, res) => {
